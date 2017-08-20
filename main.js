@@ -2,7 +2,6 @@ const { app, Tray, Menu, BrowserWindow, shell } = require("electron");
 const path = require("path");
 const Store = require("electron-store");
 const platformInfo = require("electron-platform");
-const Notification = require("electron-notifications");
 const JIRAService = require("./service");
 
 const iconPath = platformInfo.isWin32
