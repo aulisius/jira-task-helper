@@ -35,11 +35,13 @@ const configureHelper = () => {
     width: 400,
     height: 250,
     title: "Configure the JIRA Helper",
-    resizable: true,
+    resizable: false,
     movable: true,
+    minimizable: false,
+    maximizable: false,
     autoHideMenuBar: true,
     webPreferences: {
-      devTools: true
+      devTools: false
     },
     alwaysOnTop: false,
     frame: true
