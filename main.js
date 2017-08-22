@@ -1,4 +1,4 @@
-const { app, Tray, Menu, BrowserWindow, shell } = require("electron");
+const { app, Tray, Menu, BrowserWindow, shell, ipcMain } = require("electron");
 const path = require("path");
 const Store = require("electron-store");
 const platformInfo = require("electron-platform");
@@ -8,30 +8,59 @@ const iconPath = platformInfo.isWin32
   ? path.join(__dirname, "build", "icon.ico")
   : path.join(__dirname, "build", "icons", "32x32.png");
 
-const store = new Store();
+const store = new Store({
+  defaults: {
+    hostname: "",
+    password: "",
+    username: "",
+    first_time: true
+  }
+});
 const service = new JIRAService(store.store);
 let appTray = null;
 let win = null;
+let configureWindow = null;
+
+const validateConfiguration = (type, value) => {
+  if (type === "hostname") {
+  }
+};
 
 const configureHelper = () => {
-  let configureWin = new BrowserWindow({
-    width: 200,
-    height: 200,
-    resizable: false,
-    movable: false,
+  if (configureWindow) {
+    configureWindow.focus();
+    return;
+  }
+  configureWindow = new BrowserWindow({
+    width: 400,
+    height: 250,
+    title: "Configure the JIRA Helper",
+    resizable: true,
+    movable: true,
     autoHideMenuBar: true,
     webPreferences: {
-      devTools: false
+      devTools: true
     },
-    alwaysOnTop: true,
+    alwaysOnTop: false,
     frame: true
   });
-  configureWin.loadURL("file://" + path.join(__dirname, "configure.html"));
-  configureWin.on("closed", () => {
+  configureWindow.loadURL(
+    "file://" + path.join(__dirname, "public", "configure.html")
+  );
+  configureWindow.webContents.on("did-finish-load", () => {
+    configureWindow.webContents.send("fill-values", store.store);
+  });
+  ipcMain.on("updated-values", (event, arg) => {
     console.log("Configuration updated. Refreshing list");
     store.set("first_time", false);
+    console.log(arg);
+    store.set(arg);
     service.opts = store.store;
+    event.returnValue = true;
     getAllIssues();
+  });
+  configureWindow.on("closed", () => {
+    configureWindow = null;
   });
 };
 
@@ -51,6 +80,7 @@ const commonMenu = [
 
 function getAllIssues() {
   appTray.setToolTip("Loading your issues...");
+  appTray.setContextMenu(Menu.buildFromTemplate(commonMenu));
   service
     .fetchMyJIRAIssues()
     .then((issues = []) =>
@@ -83,14 +113,12 @@ function getAllIssues() {
     .catch(error => {
       console.error(error.message);
       appTray.setToolTip("Error loading issues.");
-      appTray.setContextMenu(Menu.buildFromTemplate(commonMenu));
     });
 }
 
 app.on("ready", function() {
   win = new BrowserWindow({
     autoHideMenuBar: true,
-    title: "Configure the JIRA Helper",
     webPreferences: {
       devTools: false
     },

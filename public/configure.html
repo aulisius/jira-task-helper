@@ -1,0 +1,36 @@
+<html>
+
+<head>
+  <title>Configure helper</title>
+  <link rel="stylesheet" href="bootstrap.min.css" />
+</head>
+
+<body>
+  <div class="container" onsubmit="return false">
+    <form class="form-inline">
+      <label class="sr-only" for="hostname">Hostname</label>
+      <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+        <div class="input-group-addon">https://</div>
+        <input type="text" class="form-control" id="hostname" placeholder="jira.com">
+      </div>
+
+      <div class="input-group mb-2 mr-sm-2 mb-sm-0"><label class="sr-only" for="username">Username</label>
+        <input type="text" class="form-control" id="username" placeholder="Username">
+      </div>
+      <div class="input-group mb-2 mr-sm-2 mb-sm-0"><label class="sr-only" for="password">Password</label>
+        <input type="password" class="form-control" id="password" placeholder="Password">
+      </div>
+
+      <div class="btn-group" role="group" aria-label="Form options">
+        <button type="button" id="store" class="btn btn-primary">Submit</button>
+        <button type="reset" class="btn btn-danger">Reset</button>
+        <button type="cancel" id="cancel" class="btn btn-primary">Cancel</button>
+      </div>
+    </form>
+  </div>
+  <script src="script.js">
+
+  </script>
+</body>
+
+</html>
