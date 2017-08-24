@@ -55,7 +55,6 @@ const configureHelper = () => {
   ipcMain.on("updated-values", (event, arg) => {
     console.log("Configuration updated. Refreshing list");
     store.set("first_time", false);
-    console.log(arg);
     store.set(arg);
     service.opts = store.store;
     event.returnValue = true;
